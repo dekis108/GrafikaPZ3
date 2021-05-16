@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PZ3.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,13 @@ namespace PZ3
     /// </summary>
     public partial class MainWindow : Window
     {
+        Importer _importer;
+
         public MainWindow()
         {
             InitializeComponent();
+            _importer = new Importer();
+            _importer.LoadModel();
         }
     }
 }
