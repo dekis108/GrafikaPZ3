@@ -23,6 +23,8 @@ namespace PZ3
     public partial class MainWindow : Window
     {
         Importer _importer;
+        Drawer _drawer;
+
         private Point start = new Point();
         private Point diffOffset = new Point();
         private int zoomMax = 30;
@@ -34,8 +36,10 @@ namespace PZ3
         {
             InitializeComponent();
             _importer = new Importer();
-            //viewPortDisplay.RotateGesture = new MouseGesture(MouseAction.MiddleClick);
-            //_importer.LoadModel();
+            _importer.LoadModel();
+
+            _drawer = new Drawer(Map);
+            _drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities);
         }
 
 
@@ -70,9 +74,15 @@ namespace PZ3
 
             if (middleMouseDown)
             {
+                viewPortDisplay.CaptureMouse();
                 Point mouse = e.GetPosition(this);
                 double diffX = mouse.X - middleClickPoint.X;
                 double diffY = mouse.Y - middleClickPoint.Y;
+
+                //double diffX = mouse.X - viewPortDisplay.X;
+                //double diffY = mouse.Y - middleClickPoint.Y;
+
+
 
                 rotation.Axis = new Vector3D(diffY, diffX, 0);
                 rotation.Angle = Math.Sqrt(diffX * diffX + diffY * diffY) * 0.3;
@@ -153,6 +163,7 @@ namespace PZ3
             if (e.ChangedButton == MouseButton.Middle)
             {
                 middleMouseDown = false;
+                viewPortDisplay.ReleaseMouseCapture();
                 Console.WriteLine(middleMouseDown);
             }
         }

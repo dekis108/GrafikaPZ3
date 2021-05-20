@@ -10,8 +10,7 @@ namespace PZ3.Classes
 {
     public class Importer
     {
-        int gridWidth = 500, gridHeight = 500;
-        private PowerGrid _powerGrid = new PowerGrid(500, 500);
+        public PowerGrid PowerGrid = new PowerGrid(500, 500);
 
         public Importer()
         {
@@ -20,87 +19,7 @@ namespace PZ3.Classes
 
         public  void LoadModel()
         {
-            LoadEntitiesFromXML();
-            double diffX, diffY;
-
-            throw new  NotImplementedException();
-
-            /*
-            diffX = CalculateDiff(true);
-            diffY = CalculateDiff(false);
-
-            double minY = _powerGrid.PowerEntities.Min(x => x.Value.TranslatedY);
-            double minX = _powerGrid.PowerEntities.Min(x => x.Value.TranslatedX);
-
-            LoadImages();
-
-            foreach (var entity in _powerGrid.PowerEntities)
-            {
-                Image pEntityImage = new Image();
-
-                entity.Value.Image = pEntityImage;
-
-                if (entity.Value is SwitchEntity)
-                {
-                    pEntityImage.Source = logoSwitch;
-                }
-                else if (entity.Value is SubstationEntity)
-                {
-                    pEntityImage.Source = logoSubstation;
-                }
-                else
-                {
-                    pEntityImage.Source = logoNode;
-                }
-
-                pEntityImage.Height = pixelY;
-                pEntityImage.Width = pixelX;
-                pEntityImage.Stretch = Stretch.Fill;
-
-                ToolTip t = new ToolTip();
-                t.PlacementTarget = pEntityImage;
-                t.Placement = PlacementMode.Center;
-                t.Content = entity.Value.ToString();
-                t.IsOpen = false;
-                pEntityImage.ToolTip = t;
-
-                double temp = (entity.Value.TranslatedX - minX) / diffX;
-                double temp2 = (entity.Value.TranslatedY - minY) / diffY;
-                int positionX = (int)Math.Round(temp);
-                int positionY = (int)Math.Round(temp2);
-
-                ElementSetPosition(entity.Value, pEntityImage, positionX, positionY);
-                canvasDisplay.Children.Add(pEntityImage);
-            }
-
-            /*
-            Random rand = new Random((int)Guid.NewGuid().GetHashCode());
-            var tempRand = _powerGrid.LineEntities.Values;
-            _powerGrid.LineEntities = new Dictionary<long, LineEntity>();
-            foreach(var temp in tempRand)
-            {
-                if (rand.Next(100) > 85)
-                {
-                    _powerGrid.LineEntities.Add(temp.Id, temp);
-                }
-            }
-            Console.WriteLine("UKUPNO LINIJA " + _powerGrid.LineEntities.Count);
-            
-
-            _powerGrid.SortLines();
-            int i = 0;
-            foreach (var line in _powerGrid.LineEntities.Values)
-            {
-                LineSetPosition(line, true);
-                //Console.WriteLine("URADJENJA LINIJA " + ++i);
-            }
-            //Console.WriteLine($"PRESKOCENIH LINIJA IZ PRVOG PROLAZA : {numberSkipped}");
-            foreach (var l in _powerGrid.LineEntities.Where(x => x.Value.Assigned == false))
-            {
-                LineSetPosition(l.Value, false);
-            }
-            //Console.WriteLine($"PRESKOCENIH LINIJA IZ DRUGOG PROLAZA : {numberSkipped}");
-            */
+            LoadEntitiesFromXML();      
         }
 
         private void LoadEntitiesFromXML()
@@ -129,7 +48,7 @@ namespace PZ3.Classes
                 l.FirstEnd = long.Parse(node.SelectSingleNode("FirstEnd").InnerText);
                 l.SecondEnd = long.Parse(node.SelectSingleNode("SecondEnd").InnerText);
 
-                _powerGrid.AssignLine(l);
+                PowerGrid.AssignLine(l);
             }
         }
 
@@ -150,7 +69,7 @@ namespace PZ3.Classes
                 ToLatLon(switchobj.X, switchobj.Y, 34, out noviX, out noviY);
                 switchobj.TranslatedX = noviX;
                 switchobj.TranslatedY = noviY;
-                _powerGrid.PowerEntities.Add(switchobj.Id, switchobj);
+                PowerGrid.PowerEntities.Add(switchobj.Id, switchobj);
             }
 
         }
@@ -171,7 +90,7 @@ namespace PZ3.Classes
                 ToLatLon(nodeobj.X, nodeobj.Y, 34, out noviX, out noviY);
                 nodeobj.TranslatedX = noviX;
                 nodeobj.TranslatedY = noviY;
-                _powerGrid.PowerEntities.Add(nodeobj.Id, nodeobj);
+                PowerGrid.PowerEntities.Add(nodeobj.Id, nodeobj);
 
             }
         }
@@ -193,7 +112,7 @@ namespace PZ3.Classes
                 sub.TranslatedX = noviX;
                 sub.TranslatedY = noviY;
 
-                _powerGrid.PowerEntities.Add(sub.Id, sub);
+                PowerGrid.PowerEntities.Add(sub.Id, sub);
             }
         }
 
