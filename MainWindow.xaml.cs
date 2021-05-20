@@ -1,4 +1,5 @@
-﻿using PZ3.Classes;
+﻿using PZ2.Model;
+using PZ3.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace PZ3
         private Point start = new Point();
         private Point diffOffset = new Point();
         private int zoomMax = 30;
+        private double zoomMin = 5;
         private int zoomCurent = 1;
         private bool middleMouseDown = false;
         private Point middleClickPoint;
@@ -65,8 +67,8 @@ namespace PZ3
                 double offsetY = end.Y - start.Y;
                 double w = this.Width;
                 double h = this.Height;
-                double translateX = (offsetX * 100) / w;
-                double translateY = -(offsetY * 100) / h;
+                double translateX = -(offsetX * 100) / w;
+                double translateY = +(offsetY * 100) / h;
                 trasnlation.OffsetX = diffOffset.X + (translateX / (100 * scale.ScaleX));
                 trasnlation.OffsetY = diffOffset.Y + (translateY / (100 * scale.ScaleX));
 
@@ -79,6 +81,8 @@ namespace PZ3
                 double diffX = mouse.X - middleClickPoint.X;
                 double diffY = mouse.Y - middleClickPoint.Y;
 
+                diffX *= -1;
+                diffY *= -1;
                 //double diffX = mouse.X - viewPortDisplay.X;
                 //double diffY = mouse.Y - middleClickPoint.Y;
 
@@ -107,7 +111,7 @@ namespace PZ3
                 scale.ScaleX = scaleX;
                 scale.ScaleY = scaleY;
             }
-            else if (e.Delta <= 0 && zoomCurent > -zoomMax)
+            else if (e.Delta <= 0 && zoomCurent > -zoomMin)
             {
                 scaleX = scale.ScaleX - 0.1;
                 scaleY = scale.ScaleY - 0.1;
@@ -118,35 +122,7 @@ namespace PZ3
         }
 
 
-        private void AjustRoration(double offsetX, double offsetY)
-        {
-            if ((Math.Abs(offsetX) > Math.Abs(offsetY) && offsetX < 0))
-            {
-                rotation.Axis = new Vector3D(1, 0, 1);
-                rotation.Angle = rotation.Angle + 0.2;
-            }
-            if ((Math.Abs(offsetX) > Math.Abs(offsetY) && offsetX > 0))
-            {
-                rotation.Axis = new Vector3D(1, 1, 1);
-                rotation.Angle = rotation.Angle - 0.2;
-            }
-            if ((Math.Abs(offsetX) < Math.Abs(offsetY) && offsetY > 0))
-            {
-                if (rotation.Angle < 90)
-                {
-                    rotation.Axis = new Vector3D(1, 0, 1);
-                    rotation.Angle = rotation.Angle + 0.2;
-                }
-            }
-            if ((Math.Abs(offsetX) < Math.Abs(offsetY) && offsetY < 0))
-            {
-                if (rotation.Angle >= 0)
-                {
-                    rotation.Axis = new Vector3D(1, 1, 1);
-                    rotation.Angle = rotation.Angle - 0.2;
-                }
-            }
-        }
+       
 
         private void viewPortDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -172,7 +148,5 @@ namespace PZ3
         {
             middleMouseDown = false;
         }
-
-
     }
 }
