@@ -38,13 +38,32 @@ namespace PZ3.Classes
                 //int tempx = (int)(entity.TranslatedX*1000);
                 //entity.TranslatedX = (double)tempx/ 1000; 
 
-                double x = (entity.TranslatedX - _latitudeMin) / (_latitudeMax - _latitudeMin) * (1 - _objectSize); // * TODO velicina slicice da se griduju jedna na drugu
+                /*
+                double x = (entity.TranslatedX - _latitudeMin) / (_latitudeMax - _latitudeMin) * (1 - _objectSize); 
                 double y = (entity.TranslatedY - _longitudeMin) / (_longitudeMax - _longitudeMin) * (1 - _objectSize);
+                */
+
+                double x, y;
+                ScaleToMap(entity.TranslatedX, entity.TranslatedY, out x, out y);
 
                 Point point = new Point(y, x);
 
                 Draw(entity, point);
 
+            }
+        }
+
+        private void ScaleToMap(double x, double y, out double outX, out double outY)
+        {
+            outX = (x - _latitudeMin) / (_latitudeMax - _latitudeMin) * (1 - _objectSize);
+            outY = (y - _longitudeMin) / (_longitudeMax - _longitudeMin) * (1 - _objectSize);
+        }
+
+        public void DrawLines(Dictionary<long, LineEntity> lines)
+        {
+            foreach(LineEntity line in lines.Values)
+            {
+                
             }
         }
 
@@ -56,35 +75,21 @@ namespace PZ3.Classes
             GeometryModel3D obj = new GeometryModel3D();
             obj.Material = new DiffuseMaterial(Brushes.Red);
 
-            /*
             var points = new Point3DCollection()
             {
-                new Point3D(-point.X , 0, point.Y),
-                new Point3D(-(point.X + _objectSize), 0, point.Y),
-                new Point3D(-point.X, 0, point.Y + _objectSize),
-                new Point3D(-(point.X + _objectSize), 0, point.Y + _objectSize),
-                new Point3D(-point.X, _objectSize, point.Y),
-                new Point3D(-(point.X + _objectSize), _objectSize, point.Y),
-                new Point3D(-(point.X ), _objectSize,  point.Y + _objectSize),
-                new Point3D(-(point.X + _objectSize), _objectSize,  point.Y + _objectSize),
-            };
-            */
-            var points = new Point3DCollection()
-            {
-                new Point3D(point.X - _objectSize/2, point.Y + _objectSize/2, 0),
-                new Point3D(point.X - _objectSize/2, point.Y - _objectSize/2, 0),
-                new Point3D(point.X + _objectSize/2, point.Y - _objectSize/2, 0),
-                new Point3D(point.X + _objectSize/2, point.Y + _objectSize/2, 0),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, 0),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, 0),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, 0),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, 0),
 
-                new Point3D(point.X - _objectSize/2, point.Y + _objectSize/2, _objectSize),
-                new Point3D(point.X - _objectSize/2, point.Y - _objectSize/2, _objectSize),
-                new Point3D(point.X + _objectSize/2, point.Y - _objectSize/2, _objectSize),
-                new Point3D(point.X + _objectSize/2, point.Y + _objectSize/2, _objectSize),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize),
             };
 
             var indicies = new Int32Collection()
             {
-                //2,3,1,  2,1,0,  7,1,3,  7,5,1,  6,5,7,  6,4,5,  6,2,4,  2,0,4,  2,7,3,  2,6,7,  0,1,5,  0,5,4
                 2,1,0,  3,2,0,  5,7,4,   5,6,7,  3,0,7, 3,7,6,  0,1,4,  0,4,7,  2,3,5,  3,6,5,  1,2,4,  2,5,4
             };
 

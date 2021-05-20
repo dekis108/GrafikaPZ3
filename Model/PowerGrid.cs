@@ -45,11 +45,14 @@ namespace PZ2.Model
 
         public void AssignLine(LineEntity l)
         {
+            /*
             if (PowerEntities.Values.Where(x => x.Id == l.FirstEnd).Count() > 0 && PowerEntities.Values.Where(x => x.Id == l.SecondEnd).Count() > 0
                 && LineEntities.Values.Where(x => x.FirstEnd == l.FirstEnd && x.SecondEnd == l.SecondEnd).Count() == 0)
             {
                 LineEntities.Add(l.Id, l);
             }
+            */
+            LineEntities.Add(l.Id, l);
         }
 
         private double GetLineLenght(LineEntity l)

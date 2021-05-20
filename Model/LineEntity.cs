@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -15,6 +16,8 @@ namespace PZ2.Model
         private long secondEnd;
         public string Name { get; set; }
 
+        public List<Point> Vertices { get; set; }
+
         public bool Assigned { get; set; }
 
         public override string ToString()
@@ -24,7 +27,7 @@ namespace PZ2.Model
 
         public LineEntity()
         {
-
+            Vertices = new List<Point>();
         }
 
         public long Id

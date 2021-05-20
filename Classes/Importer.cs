@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace PZ3.Classes
@@ -47,6 +48,20 @@ namespace PZ3.Classes
                 l.Name = node.SelectSingleNode("Name").InnerText;
                 l.FirstEnd = long.Parse(node.SelectSingleNode("FirstEnd").InnerText);
                 l.SecondEnd = long.Parse(node.SelectSingleNode("SecondEnd").InnerText);
+
+                foreach (XmlNode pointNode in node.ChildNodes[9].ChildNodes) // 9 posto je Vertices 9. node u jednom line objektu
+                {
+                    Point p = new Point();
+
+                    p.X = double.Parse(pointNode.SelectSingleNode("X").InnerText);
+                    p.Y = double.Parse(pointNode.SelectSingleNode("Y").InnerText);
+
+                    double x, y;
+                    ToLatLon(p.X, p.Y, 34, out x, out y);
+
+                    l.Vertices.Add(p);
+                }
+
 
                 PowerGrid.AssignLine(l);
             }
