@@ -1,6 +1,7 @@
 ﻿using PZ2.Model;
 using PZ3.Classes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,8 @@ namespace PZ3
         Importer _importer;
         Drawer _drawer;
 
+        private bool middleMouseDown = false;
+        private Point middleClickPoint;
         private Point start = new Point();
         private Point diffOffset = new Point();
 
@@ -34,9 +37,8 @@ namespace PZ3
         private static int zoomCurent = 1;
         private static double _rotateOffset = 0.5;
 
-
-        private bool middleMouseDown = false;
-        private Point middleClickPoint;
+        private GeometryModel3D hitgeo;
+        private ArrayList models = new ArrayList();
 
         public MainWindow()
         {
@@ -45,8 +47,8 @@ namespace PZ3
             _importer.LoadModel();
 
             _drawer = new Drawer(Map);
-            _drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities);
-            _drawer.DrawLines(_importer.PowerGrid.LineEntities);
+            models.AddRange(_drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities));
+            models.AddRange(_drawer.DrawLines(_importer.PowerGrid.LineEntities));
         }
 
 
@@ -131,12 +133,29 @@ namespace PZ3
 
         private void viewPortDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
+
             if (e.ChangedButton == MouseButton.Middle)
             {
                 middleMouseDown = true;
                 middleClickPoint = e.GetPosition(this);
                 Console.WriteLine(middleMouseDown);
             }
+
+
+            //hit testing
+
+            Point mouseposition = e.GetPosition(this);
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+
+            PointHitTestParameters pointparams =
+                     new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams =
+                     new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D     
+            hitgeo = null;
+            VisualTreeHelper.HitTest(viewPortDisplay, null, HTResult, pointparams);
         }
 
         private void viewPortDisplay_MouseUp(object sender, MouseButtonEventArgs e)
@@ -152,6 +171,35 @@ namespace PZ3
         private void viewPortDisplay_MouseLeave(object sender, MouseEventArgs e)
         {
             middleMouseDown = false;
+        }
+
+        private HitTestResultBehavior HTResult(HitTestResult rawresult)
+        {
+
+            RayHitTestResult rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                bool gasit = false;
+                for (int i = 0; i < models.Count; i++)
+                {
+                    if ((GeometryModel3D)models[i] == rayResult.ModelHit)
+                    {
+                        hitgeo = (GeometryModel3D)rayResult.ModelHit;
+                        gasit = true;
+                    }
+                    else
+                    {
+                        
+                    }
+                }
+                if (!gasit)
+                {
+                    hitgeo = null;
+                }
+            }
+
+            return HitTestResultBehavior.Stop;
         }
     }
 }

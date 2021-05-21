@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
 using System.Windows;
+using System.Collections;
 
 namespace PZ3.Classes
 {
@@ -24,12 +25,15 @@ namespace PZ3.Classes
 
         Model3DGroup _map;
 
+        ArrayList powerEntities = new ArrayList();
+        ArrayList powerLines = new ArrayList();
+
         public Drawer(Model3DGroup map)
         {
             _map = map;
         }
 
-        public void DrawPowerEntities(Dictionary<long, PowerEntity> entities) 
+        public ArrayList DrawPowerEntities(Dictionary<long, PowerEntity> entities) 
         {
             foreach(var entity in entities.Values)
             {
@@ -39,11 +43,6 @@ namespace PZ3.Classes
                 //int tempx = (int)(entity.TranslatedX*1000);
                 //entity.TranslatedX = (double)tempx/ 1000; 
 
-                /*
-                double x = (entity.TranslatedX - _latitudeMin) / (_latitudeMax - _latitudeMin) * (1 - _objectSize); 
-                double y = (entity.TranslatedY - _longitudeMin) / (_longitudeMax - _longitudeMin) * (1 - _objectSize);
-                */
-
                 double x, y;
                 ScaleToMap(entity.TranslatedX, entity.TranslatedY, out x, out y);
 
@@ -52,6 +51,8 @@ namespace PZ3.Classes
                 Draw(entity, point);
 
             }
+
+            return powerEntities;
         }
 
         private void ScaleToMap(double x, double y, out double outX, out double outY)
@@ -60,7 +61,7 @@ namespace PZ3.Classes
             outY = (y - _longitudeMin) / (_longitudeMax - _longitudeMin) * (1 - _objectSize);
         }
 
-        public void DrawLines(Dictionary<long, LineEntity> lines)
+        public ArrayList DrawLines(Dictionary<long, LineEntity> lines)
         {
             double x, y;
             foreach(LineEntity line in lines.Values)
@@ -77,17 +78,14 @@ namespace PZ3.Classes
                    
                 }
 
-                
-
-                //GeometryModel3D powerLine = new GeometryModel3D();
-                //powerLine.Material = new DiffuseMaterial(Brushes.Purple);
 
                 for (int i = 1; i < points.Count; ++i) //draw a line between points[i] and points[i-1]
                 {
                     DrawLine(points[i], points[i - 1]);
                 }
-                
             }
+
+            return powerLines;
         }
 
         private void DrawLine(Point start, Point end)
@@ -117,6 +115,7 @@ namespace PZ3.Classes
 
             powerLine.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies };
             _map.Children.Add(powerLine);
+            powerLines.Add(powerLine);
         }
 
         private void Draw(PowerEntity entity, Point point)
@@ -149,6 +148,7 @@ namespace PZ3.Classes
             obj.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies};
             //obj.SetValue(IsToolTip, toolTip);
             _map.Children.Add(obj);
+            powerEntities.Add(obj);
         }
     }
 }
