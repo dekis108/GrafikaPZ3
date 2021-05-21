@@ -25,8 +25,8 @@ namespace PZ3.Classes
 
         Model3DGroup _map;
 
-        ArrayList powerEntities = new ArrayList();
-        ArrayList powerLines = new ArrayList();
+        private Dictionary<long, GeometryModel3D> powerEntities = new Dictionary<long, GeometryModel3D>();
+        private List<GeometryModel3D> powerLines = new List<GeometryModel3D>();
 
         public static readonly DependencyProperty TagDP = DependencyProperty.RegisterAttached("Tag", typeof(string), typeof(GeometryModel3D));
 
@@ -35,7 +35,7 @@ namespace PZ3.Classes
             _map = map;
         }
 
-        public ArrayList DrawPowerEntities(Dictionary<long, PowerEntity> entities) 
+        public Dictionary<long, GeometryModel3D> DrawPowerEntities(Dictionary<long, PowerEntity> entities) 
         {
             foreach(var entity in entities.Values)
             {
@@ -63,7 +63,7 @@ namespace PZ3.Classes
             outY = (y - _longitudeMin) / (_longitudeMax - _longitudeMin) * (1 - _objectSize);
         }
 
-        public ArrayList DrawLines(Dictionary<long, LineEntity> lines)
+        public List<GeometryModel3D> DrawLines(Dictionary<long, LineEntity> lines)
         {
             double x, y;
             foreach(LineEntity line in lines.Values)
@@ -151,7 +151,7 @@ namespace PZ3.Classes
             obj.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies};
             //obj.SetValue(IsToolTip, toolTip);
             _map.Children.Add(obj);
-            powerEntities.Add(obj);
+            powerEntities.Add(entity.Id,  obj);
         }
 
 

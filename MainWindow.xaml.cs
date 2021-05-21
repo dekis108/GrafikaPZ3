@@ -39,7 +39,8 @@ namespace PZ3
         private static double _rotateOffset = 0.5;
 
         private GeometryModel3D hitgeo;
-        private ArrayList models = new ArrayList();
+        private Dictionary<long, GeometryModel3D> entitiesModels = new Dictionary<long, GeometryModel3D>();
+        private List<GeometryModel3D> linesModels = new List<GeometryModel3D>();
 
         public MainWindow()
         {
@@ -48,8 +49,14 @@ namespace PZ3
             _importer.LoadModel();
 
             _drawer = new Drawer(Map);
-            models.AddRange(_drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities));
-            models.AddRange(_drawer.DrawLines(_importer.PowerGrid.LineEntities));
+            
+            foreach(var pair in _drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities))
+            {
+                entitiesModels.Add(pair.Key, pair.Value);
+            }
+
+            //models.AddRange(_drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities));
+            linesModels.AddRange(_drawer.DrawLines(_importer.PowerGrid.LineEntities));
         }
 
 
@@ -181,33 +188,19 @@ namespace PZ3
             if (rayResult != null)
             {
                 bool gasit = false;
-                for (int i = 0; i < models.Count; i++)
+                //for (int i = 0; i < models.Count; i++)
+                foreach(var model in entitiesModels.Values)
                 {
-                    if ((GeometryModel3D)models[i] == rayResult.ModelHit)
+                    if (model == rayResult.ModelHit)
                     {
                         hitgeo = (GeometryModel3D)rayResult.ModelHit;
                         gasit = true;
 
-                        //if entitet izbaci msgBox
-                        var model = (GeometryModel3D)models[i];
+                        //var model = (GeometryModel3D)models[i];
 
                         string tag = (string)model.GetValue(Drawer.TagDP);
-                        if (tag == null || tag == "")
-                        {
-                            //line
-                        }
-                        else
-                        {
-                            //entitet
-                            MessageBox.Show(tag, "testCaption", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
+                        MessageBox.Show(tag, "Entity information", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                       
-
-                    }
-                    else
-                    {
-                        //todo restuj boje ne-kliknutih vodova
                     }
                 }
                 if (!gasit)
