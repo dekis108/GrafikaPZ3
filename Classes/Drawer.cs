@@ -26,8 +26,9 @@ namespace PZ3.Classes
         Model3DGroup _map;
 
         private DiffuseMaterial _defaultLineMaterial = new DiffuseMaterial(Brushes.Black);
-        private DiffuseMaterial _defaultNodeMaterial = new DiffuseMaterial(Brushes.Red);
-        private DiffuseMaterial _defaultSwitchMaterial = new DiffuseMaterial(Brushes.Blue);
+        private DiffuseMaterial _defaultNodeMaterial = new DiffuseMaterial(Brushes.Blue);
+        private DiffuseMaterial _defaultSwitchClosedMaterial = new DiffuseMaterial(Brushes.Red);
+        private DiffuseMaterial _defaultSwitchOpenMaterial = new DiffuseMaterial(Brushes.Green);
         private DiffuseMaterial _defaultSubstationMaterial = new DiffuseMaterial(Brushes.Orange);
         private DiffuseMaterial _selectedMaterial = new DiffuseMaterial(Brushes.Purple);
 
@@ -39,6 +40,7 @@ namespace PZ3.Classes
         public static readonly DependencyProperty StartDP = DependencyProperty.RegisterAttached("Start", typeof(long), typeof(GeometryModel3D));
         public static readonly DependencyProperty EndDP = DependencyProperty.RegisterAttached("End", typeof(long), typeof(GeometryModel3D));
         public static readonly DependencyProperty EntityTypeDP = DependencyProperty.RegisterAttached("EntityType", typeof(string), typeof(GeometryModel3D));
+        public static readonly DependencyProperty SwitchMode = DependencyProperty.RegisterAttached("SwitchMode", typeof(bool), typeof(GeometryModel3D));
 
         public Drawer(Model3DGroup map)
         {
@@ -166,10 +168,25 @@ namespace PZ3.Classes
                 obj.Material = _defaultSubstationMaterial;
                 obj.SetValue(EntityTypeDP, "Substation");
             }
+            else if (entity is SwitchEntity)
+            {
+                bool isOpen = ((SwitchEntity)entity).Status == "Open";
+
+                if (isOpen)
+                {
+                    obj.Material = _defaultSwitchOpenMaterial;
+                }
+                else
+                {
+                    obj.Material = _defaultSwitchClosedMaterial;
+                }
+
+                obj.SetValue(SwitchMode, isOpen); 
+                obj.SetValue(EntityTypeDP, "Switch");
+            }
             else
             {
-                obj.Material = _defaultSwitchMaterial;
-                obj.SetValue(EntityTypeDP, "Switch");
+                throw new NotImplementedException();
             }
 
 
@@ -220,7 +237,14 @@ namespace PZ3.Classes
                     model.Material = _defaultNodeMaterial;
                     break;
                 case "Switch":
-                    model.Material = _defaultSwitchMaterial;
+                    if ((bool)model.GetValue(SwitchMode))
+                    {
+                        model.Material = _defaultSwitchOpenMaterial;
+                    }
+                    else
+                    {
+                        model.Material = _defaultSwitchClosedMaterial;
+                    }
                     break;
                 case "Substation":
                     model.Material = _defaultSubstationMaterial;
