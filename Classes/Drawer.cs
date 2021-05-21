@@ -28,6 +28,8 @@ namespace PZ3.Classes
         ArrayList powerEntities = new ArrayList();
         ArrayList powerLines = new ArrayList();
 
+        public static readonly DependencyProperty TagDP = DependencyProperty.RegisterAttached("Tag", typeof(string), typeof(GeometryModel3D));
+
         public Drawer(Model3DGroup map)
         {
             _map = map;
@@ -120,11 +122,12 @@ namespace PZ3.Classes
 
         private void Draw(PowerEntity entity, Point point)
         {
-            ToolTip toolTip = new ToolTip();
-            toolTip.Content = $"ID: {entity.Id} \n Name: {entity.Name}\n";
+            string tag = $"ID: {entity.Id} \nName: {entity.Name}\n";
 
             GeometryModel3D obj = new GeometryModel3D();
+
             obj.Material = new DiffuseMaterial(Brushes.Red);
+            obj.SetValue(TagDP, tag);
 
             var points = new Point3DCollection()
             {
@@ -150,5 +153,7 @@ namespace PZ3.Classes
             _map.Children.Add(obj);
             powerEntities.Add(obj);
         }
+
+
     }
 }

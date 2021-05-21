@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -175,7 +176,6 @@ namespace PZ3
 
         private HitTestResultBehavior HTResult(HitTestResult rawresult)
         {
-
             RayHitTestResult rayResult = rawresult as RayHitTestResult;
 
             if (rayResult != null)
@@ -187,10 +187,27 @@ namespace PZ3
                     {
                         hitgeo = (GeometryModel3D)rayResult.ModelHit;
                         gasit = true;
+
+                        //if entitet izbaci msgBox
+                        var model = (GeometryModel3D)models[i];
+
+                        string tag = (string)model.GetValue(Drawer.TagDP);
+                        if (tag == null || tag == "")
+                        {
+                            //line
+                        }
+                        else
+                        {
+                            //entitet
+                            MessageBox.Show(tag, "testCaption", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+
+                       
+
                     }
                     else
                     {
-                        
+                        //todo restuj boje ne-kliknutih vodova
                     }
                 }
                 if (!gasit)
