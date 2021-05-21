@@ -28,9 +28,13 @@ namespace PZ3
 
         private Point start = new Point();
         private Point diffOffset = new Point();
+
         private static int zoomMax = 30;
         private static double zoomMin = 5;
         private static int zoomCurent = 1;
+        private static double _rotateOffset = 0.5;
+
+
         private bool middleMouseDown = false;
         private Point middleClickPoint;
 
@@ -61,7 +65,7 @@ namespace PZ3
 
         private void viewport1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (viewPortDisplay.IsMouseCaptured)
+            if (viewPortDisplay.IsMouseCaptured && !middleMouseDown)
             {
                 Point end = e.GetPosition(this);
                 double offsetX = end.X - start.X;
@@ -90,7 +94,7 @@ namespace PZ3
 
 
                 rotation.Axis = new Vector3D(diffY, diffX, 0);
-                rotation.Angle = Math.Sqrt(diffX * diffX + diffY * diffY) * 0.3;
+                rotation.Angle = Math.Sqrt(diffX * diffX + diffY * diffY) * _rotateOffset;
 
 
                 Console.WriteLine("X" + diffX + " Y" + diffY);
