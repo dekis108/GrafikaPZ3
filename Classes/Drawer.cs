@@ -25,10 +25,16 @@ namespace PZ3.Classes
 
         Model3DGroup _map;
 
+        private DiffuseMaterial _defaultLineMaterial = new DiffuseMaterial(Brushes.Black);
+        private DiffuseMaterial _defaultEntityMaterial = new DiffuseMaterial(Brushes.Red);
+        private DiffuseMaterial _selectedMaterial = new DiffuseMaterial(Brushes.Purple);
+
         private Dictionary<long, GeometryModel3D> powerEntities = new Dictionary<long, GeometryModel3D>();
         private List<GeometryModel3D> powerLines = new List<GeometryModel3D>();
 
         public static readonly DependencyProperty TagDP = DependencyProperty.RegisterAttached("Tag", typeof(string), typeof(GeometryModel3D));
+        public static readonly DependencyProperty StartDP = DependencyProperty.RegisterAttached("Start", typeof(long), typeof(GeometryModel3D));
+        public static readonly DependencyProperty EndDP = DependencyProperty.RegisterAttached("End", typeof(long), typeof(GeometryModel3D));
 
         public Drawer(Model3DGroup map)
         {
@@ -83,19 +89,21 @@ namespace PZ3.Classes
 
                 for (int i = 1; i < points.Count; ++i) //draw a line between points[i] and points[i-1]
                 {
-                    DrawLine(points[i], points[i - 1]);
+                    DrawLine(line, points[i], points[i - 1]);
                 }
             }
 
             return powerLines;
         }
 
-        private void DrawLine(Point start, Point end)
+        private void DrawLine(LineEntity line, Point start, Point end)
         {
             GeometryModel3D powerLine = new GeometryModel3D();
-            powerLine.Material = new DiffuseMaterial(Brushes.Black);
+            powerLine.Material = _defaultLineMaterial;
 
-            
+            powerLine.SetValue(StartDP, line.FirstEnd);
+            powerLine.SetValue(EndDP, line.SecondEnd);
+
             var points = new Point3DCollection()
             {
                 new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, 0),
@@ -126,7 +134,7 @@ namespace PZ3.Classes
 
             GeometryModel3D obj = new GeometryModel3D();
 
-            obj.Material = new DiffuseMaterial(Brushes.Red);
+            obj.Material = _defaultEntityMaterial;
             obj.SetValue(TagDP, tag);
 
             var points = new Point3DCollection()
@@ -149,11 +157,18 @@ namespace PZ3.Classes
 
 
             obj.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies};
-            //obj.SetValue(IsToolTip, toolTip);
             _map.Children.Add(obj);
             powerEntities.Add(entity.Id,  obj);
         }
 
+        public void EntitySelected(GeometryModel3D model)
+        {
+            model.Material = _selectedMaterial;
+        }
 
+        internal void Reset(GeometryModel3D model)
+        {
+            model.Material = _defaultEntityMaterial;
+        }
     }
 }

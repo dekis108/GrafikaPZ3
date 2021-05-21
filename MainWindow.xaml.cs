@@ -40,6 +40,7 @@ namespace PZ3
 
         private GeometryModel3D hitgeo;
         private Dictionary<long, GeometryModel3D> entitiesModels = new Dictionary<long, GeometryModel3D>();
+        private List<GeometryModel3D> selectedEntities = new List<GeometryModel3D>();
         private List<GeometryModel3D> linesModels = new List<GeometryModel3D>();
 
         public MainWindow()
@@ -185,12 +186,16 @@ namespace PZ3
         {
             RayHitTestResult rayResult = rawresult as RayHitTestResult;
 
+            ResetSelected();
+
             if (rayResult != null)
             {
                 bool gasit = false;
                 //for (int i = 0; i < models.Count; i++)
                 foreach(var model in entitiesModels.Values)
                 {
+                    if (gasit) break;
+
                     if (model == rayResult.ModelHit)
                     {
                         hitgeo = (GeometryModel3D)rayResult.ModelHit;
@@ -203,6 +208,29 @@ namespace PZ3
 
                     }
                 }
+
+                if (!gasit)
+                {
+                    foreach(var model in linesModels)
+                    {
+                        if (gasit) break;
+
+                        if (model == rayResult.ModelHit)
+                        {
+                            hitgeo = (GeometryModel3D)rayResult.ModelHit;
+                            gasit = true;
+
+
+                            long start = (long)model.GetValue(Drawer.StartDP);
+                            long end = (long)model.GetValue(Drawer.EndDP);
+
+                            EntitySelected(start);
+                            EntitySelected(end);
+
+                        }
+                    }
+                }
+
                 if (!gasit)
                 {
                     hitgeo = null;
@@ -210,6 +238,25 @@ namespace PZ3
             }
 
             return HitTestResultBehavior.Stop;
+        }
+
+        private void ResetSelected()
+        {
+            foreach(var model in selectedEntities)
+            {
+                _drawer.Reset(model);
+            }
+            selectedEntities.Clear();
+        }
+
+        private void EntitySelected(long id)
+        {
+            try
+            {
+                _drawer.EntitySelected(entitiesModels[id]);
+                selectedEntities.Add(entitiesModels[id]);
+            }
+            catch { }
         }
     }
 }
