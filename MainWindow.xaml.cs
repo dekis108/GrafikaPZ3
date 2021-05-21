@@ -137,9 +137,6 @@ namespace PZ3
             }
         }
 
-
-       
-
         private void viewPortDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
@@ -148,10 +145,12 @@ namespace PZ3
                 middleMouseDown = true;
                 middleClickPoint = e.GetPosition(this);
                 Console.WriteLine(middleMouseDown);
+                return;
             }
 
 
             //hit testing
+            if (e.ChangedButton != MouseButton.Left) return;
 
             Point mouseposition = e.GetPosition(this);
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
