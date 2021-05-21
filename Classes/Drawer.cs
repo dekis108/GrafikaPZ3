@@ -26,7 +26,9 @@ namespace PZ3.Classes
         Model3DGroup _map;
 
         private DiffuseMaterial _defaultLineMaterial = new DiffuseMaterial(Brushes.Black);
-        private DiffuseMaterial _defaultEntityMaterial = new DiffuseMaterial(Brushes.Red);
+        private DiffuseMaterial _defaultNodeMaterial = new DiffuseMaterial(Brushes.Red);
+        private DiffuseMaterial _defaultSwitchMaterial = new DiffuseMaterial(Brushes.Blue);
+        private DiffuseMaterial _defaultSubstationMaterial = new DiffuseMaterial(Brushes.Orange);
         private DiffuseMaterial _selectedMaterial = new DiffuseMaterial(Brushes.Purple);
 
         private Dictionary<long, GeometryModel3D> powerEntities = new Dictionary<long, GeometryModel3D>();
@@ -36,6 +38,7 @@ namespace PZ3.Classes
         public static readonly DependencyProperty TagDP = DependencyProperty.RegisterAttached("Tag", typeof(string), typeof(GeometryModel3D));
         public static readonly DependencyProperty StartDP = DependencyProperty.RegisterAttached("Start", typeof(long), typeof(GeometryModel3D));
         public static readonly DependencyProperty EndDP = DependencyProperty.RegisterAttached("End", typeof(long), typeof(GeometryModel3D));
+        public static readonly DependencyProperty EntityTypeDP = DependencyProperty.RegisterAttached("EntityType", typeof(string), typeof(GeometryModel3D));
 
         public Drawer(Model3DGroup map)
         {
@@ -151,7 +154,25 @@ namespace PZ3.Classes
 
             GeometryModel3D obj = new GeometryModel3D();
 
-            obj.Material = _defaultEntityMaterial;
+            //obj.Material = _defaultEntityMaterial;
+
+            if (entity is NodeEntity)
+            {
+                obj.Material = _defaultNodeMaterial;
+                obj.SetValue(EntityTypeDP, "Node");
+            }
+            else if (entity is SubstationEntity)
+            {
+                obj.Material = _defaultSubstationMaterial;
+                obj.SetValue(EntityTypeDP, "Substation");
+            }
+            else
+            {
+                obj.Material = _defaultSwitchMaterial;
+                obj.SetValue(EntityTypeDP, "Switch");
+            }
+
+
             obj.SetValue(TagDP, tag);
 
 
@@ -193,7 +214,20 @@ namespace PZ3.Classes
 
         internal void Reset(GeometryModel3D model)
         {
-            model.Material = _defaultEntityMaterial;
+           switch ((string)model.GetValue(EntityTypeDP))
+           {
+                case "Node":
+                    model.Material = _defaultNodeMaterial;
+                    break;
+                case "Switch":
+                    model.Material = _defaultSwitchMaterial;
+                    break;
+                case "Substation":
+                    model.Material = _defaultSubstationMaterial;
+                    break;
+                default:
+                    throw new NotImplementedException();
+           }
         }
     }
 }
