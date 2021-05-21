@@ -59,9 +59,11 @@ namespace PZ3.Classes
                     double x, y;
                     ToLatLon(p.X, p.Y, 34, out x, out y);
 
+                    p.X = x;
+                    p.Y = y;
+
                     l.Vertices.Add(p);
                 }
-
 
                 PowerGrid.AssignLine(l);
             }

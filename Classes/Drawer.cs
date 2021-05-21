@@ -19,7 +19,8 @@ namespace PZ3.Classes
         private static double _longitudeMin = 19.793909;
         private static double _longitudeMax = 19.894459;
 
-        private static double _objectSize = 0.008;
+        private static double _objectSize = 0.006;
+        private static double _lineSize = 0.002;
 
         Model3DGroup _map;
 
@@ -61,10 +62,61 @@ namespace PZ3.Classes
 
         public void DrawLines(Dictionary<long, LineEntity> lines)
         {
+            double x, y;
             foreach(LineEntity line in lines.Values)
             {
+                List<Point> points = new List<Point>();
+
+                foreach (Point vertice in line.Vertices)
+                {
+                    if (vertice.Y < _longitudeMin || vertice.Y > _longitudeMax || vertice.X < _latitudeMin || vertice.X > _latitudeMax)
+                        continue;
+
+                    ScaleToMap(vertice.X, vertice.Y, out x, out y);
+                    points.Add(new Point(y, x)); //nzm ne pitaj
+                   
+                }
+
+                
+
+                //GeometryModel3D powerLine = new GeometryModel3D();
+                //powerLine.Material = new DiffuseMaterial(Brushes.Purple);
+
+                for (int i = 1; i < points.Count; ++i) //draw a line between points[i] and points[i-1]
+                {
+                    DrawLine(points[i], points[i - 1]);
+                }
                 
             }
+        }
+
+        private void DrawLine(Point start, Point end)
+        {
+            GeometryModel3D powerLine = new GeometryModel3D();
+            powerLine.Material = new DiffuseMaterial(Brushes.Black);
+
+            
+            var points = new Point3DCollection()
+            {
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, 0),
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y - _lineSize/2 - 0.5, 0),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y - _lineSize/2 - 0.5, 0),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y + _lineSize/2 - 0.5, 0),
+
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, _lineSize),
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y - _lineSize/2 - 0.5, _lineSize),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y - _lineSize/2 - 0.5, _lineSize),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y + _lineSize/2 - 0.5, _lineSize),
+            };
+
+
+            var indicies = new Int32Collection()
+            {
+                2,1,0,  3,2,0,  5,7,4,   5,6,7,  3,0,7, 3,7,6,  0,1,4,  0,4,7,  2,3,5,  3,6,5,  1,2,4,  2,5,4
+            };
+
+            powerLine.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies };
+            _map.Children.Add(powerLine);
         }
 
         private void Draw(PowerEntity entity, Point point)
@@ -93,11 +145,6 @@ namespace PZ3.Classes
                 2,1,0,  3,2,0,  5,7,4,   5,6,7,  3,0,7, 3,7,6,  0,1,4,  0,4,7,  2,3,5,  3,6,5,  1,2,4,  2,5,4
             };
 
-            var normals = new Vector3DCollection()
-            {
-                new Vector3D(0,0,0), new Vector3D(1,0,0),  new Vector3D(1,1,0), new Vector3D(0,1,0), new Vector3D(0,0,-1), new Vector3D(1,0,-1),
-                new Vector3D(1,1,-1), new Vector3D(0,1,1), new Vector3D(0,0,2), new Vector3D(0,0,-2)
-            };
 
             obj.Geometry = new MeshGeometry3D() { Positions = points, TriangleIndices = indicies};
             //obj.SetValue(IsToolTip, toolTip);

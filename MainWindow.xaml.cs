@@ -28,9 +28,9 @@ namespace PZ3
 
         private Point start = new Point();
         private Point diffOffset = new Point();
-        private int zoomMax = 30;
-        private double zoomMin = 5;
-        private int zoomCurent = 1;
+        private static int zoomMax = 30;
+        private static double zoomMin = 5;
+        private static int zoomCurent = 1;
         private bool middleMouseDown = false;
         private Point middleClickPoint;
 
@@ -42,6 +42,7 @@ namespace PZ3
 
             _drawer = new Drawer(Map);
             _drawer.DrawPowerEntities(_importer.PowerGrid.PowerEntities);
+            _drawer.DrawLines(_importer.PowerGrid.LineEntities);
         }
 
 
