@@ -128,10 +128,10 @@ namespace PZ3.Classes
 
             var points = new Point3DCollection()
             {
-                new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, 0),
-                new Point3D(start.X - _lineSize/2 - 0.5, start.Y - _lineSize/2 - 0.5, 0),
-                new Point3D(end.X + _lineSize/2 - 0.5, end.Y - _lineSize/2 - 0.5, 0),
-                new Point3D(end.X + _lineSize/2 - 0.5, end.Y + _lineSize/2 - 0.5, 0),
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, _lineSize),
+                new Point3D(start.X - _lineSize/2 - 0.5, start.Y - _lineSize/2 - 0.5, _lineSize),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y - _lineSize/2 - 0.5, _lineSize),
+                new Point3D(end.X + _lineSize/2 - 0.5, end.Y + _lineSize/2 - 0.5, _lineSize),
 
                 new Point3D(start.X - _lineSize/2 - 0.5, start.Y + _lineSize/2 - 0.5, _lineSize),
                 new Point3D(start.X - _lineSize/2 - 0.5, start.Y - _lineSize/2 - 0.5, _lineSize),
