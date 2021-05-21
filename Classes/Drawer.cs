@@ -30,6 +30,7 @@ namespace PZ3.Classes
         private DiffuseMaterial _selectedMaterial = new DiffuseMaterial(Brushes.Purple);
 
         private Dictionary<long, GeometryModel3D> powerEntities = new Dictionary<long, GeometryModel3D>();
+        private Dictionary<Point, int> locationsTaken = new Dictionary<Point, int>();
         private List<GeometryModel3D> powerLines = new List<GeometryModel3D>();
 
         public static readonly DependencyProperty TagDP = DependencyProperty.RegisterAttached("Tag", typeof(string), typeof(GeometryModel3D));
@@ -52,9 +53,25 @@ namespace PZ3.Classes
                 //entity.TranslatedX = (double)tempx/ 1000; 
 
                 double x, y;
+
+                entity.TranslatedX = Math.Round(entity.TranslatedX, 3);
+                entity.TranslatedY = Math.Round(entity.TranslatedY, 3);
+
                 ScaleToMap(entity.TranslatedX, entity.TranslatedY, out x, out y);
 
+                //x = Math.Round(x, 3);
+                //y = Math.Round(y, 3);
+
                 Point point = new Point(y, x);
+
+                if (locationsTaken.ContainsKey(point))
+                {
+                    locationsTaken[point]++;
+                }
+                else
+                {
+                    locationsTaken.Add(point, 1);
+                }
 
                 Draw(entity, point);
 
@@ -137,17 +154,25 @@ namespace PZ3.Classes
             obj.Material = _defaultEntityMaterial;
             obj.SetValue(TagDP, tag);
 
+
+            int Zoffset = 0;
+            if (locationsTaken.ContainsKey(point))
+            {
+                Zoffset = locationsTaken[point] - 1;
+            }
+
+
             var points = new Point3DCollection()
             {
-                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, 0),
-                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, 0),
-                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, 0),
-                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, 0),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, Zoffset * _objectSize),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, Zoffset * _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, Zoffset * _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, Zoffset * _objectSize),
 
-                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize),
-                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize),
-                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize),
-                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize + Zoffset * _objectSize),
+                new Point3D(point.X - _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize + Zoffset * _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y - _objectSize/2 - 0.5, _objectSize + Zoffset * _objectSize),
+                new Point3D(point.X + _objectSize/2 - 0.5, point.Y + _objectSize/2 - 0.5, _objectSize + Zoffset * _objectSize),
             };
 
             var indicies = new Int32Collection()

@@ -43,6 +43,7 @@ namespace PZ3
         private List<GeometryModel3D> selectedEntities = new List<GeometryModel3D>();
         private List<GeometryModel3D> linesModels = new List<GeometryModel3D>();
 
+
         public MainWindow()
         {
             InitializeComponent();
